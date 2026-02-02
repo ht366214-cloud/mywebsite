@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundBridge | Music Industry Manager</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #8b5cf6; /* Violet */
+            --primary-dark: #7c3aed;
+            --secondary: #ec4899; /* Pink */
+            --gemini-gradient: linear-gradient(135deg, #4da3ff, #8b5cf6, #ec4899);
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --nav-height: 60px;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Light Mode Overrides */
+        [data-theme="light"] {
+            --bg-dark: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            transition: background-color 0.3s ease;
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Space for mobile nav */
+        }
+
+        /* --- Utilities --- */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .text-center { text-align: center; }
+        .w-full { width: 100%; }
+        .mt-2 { margin-top: 1rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
+
+        /* --- Components --- */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .btn-ai {
+            background: var(--gemini-gradient);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-ai::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn-ai:hover::after { opacity: 1; }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: var(--radius);
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+
+        /* --- Navigation --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            border-bottom: 1px solid #334155;
+        }
+        
+        [data-theme="light"] .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Bottom Mobile Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid #334155;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.8rem;
+            background: none;
+        }
+
+        .nav-item i {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* --- Sections --- */
+        .screen {
+            padding: 80px 20px 20px 20px; /* Top pad for navbar */
+            min-height: 100vh;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Auth Screen */
+        #auth-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 0;
+            background: radial-gradient(circle at top right, #1e1b4b, var(--bg-dark));
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+
+        .logo-large {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        /* Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        
+        .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Changed to 3 for better layout with AI */
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            padding: 15px 5px;
+            border-radius: var(--radius);
+            text-align: center;
+            color: var(--text-main);
+            font-size: 0.8rem;
+        }
+        .action-btn i { font-size: 1.5rem; margin-bottom: 5px; color: var(--secondary); }
+        
+        /* AI Card Styling */
+        .ai-result-box {
+            background: rgba(139, 92, 246, 0.1); 
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .ai-loading {
+            display: none;
+            text-align: center;
+            color: var(--secondary);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Song List */
+        .song-card {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: var(--radius);
+            position: relative;
+        }
+
+        .song-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background: #333;
+        }
+
+        .song-info h4 { font-size: 1rem; margin-bottom: 4px; }
+        .song-info p { font-size: 0.85rem; color: var(--text-muted); }
+        
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .status-live { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-pending { background: rgba(234, 179, 8, 0.2); color: #eab308; }
+
+        .song-actions {
+            margin-left: auto;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #334155;
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            cursor: pointer;
+        }
+        .upload-area:hover { border-color: var(--primary); }
+
+        /* Earnings Chart (CSS Only) */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 150px;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+        }
+        .chart-bar {
+            width: 12%;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 1s ease;
+        }
+        .chart-month {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            bottom: 90px;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 0.9rem;
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 90px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 90px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .screen {
+                padding-left: 20%;
+                padding-right: 20%;
+            }
+            .bottom-nav {
+                top: 0;
+                bottom: auto;
+                left: auto;
+                right: 20px;
+                width: auto;
+                background: transparent;
+                border: none;
+                height: var(--nav-height);
+            }
+            .nav-item {
+                margin-left: 20px;
+                font-size: 1rem;
+            }
+            .nav-item i { display: none; } /* Hide icons on desktop nav, show text */
+            .nav-item::after { content: attr(data-label); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification -->
+    <div id="toast">Notification Message</div>
+
+    <!-- Navigation Bar (Top) -->
+    <nav class="navbar hidden" id="main-nav">
+        <div class="nav-logo"><i class="fas fa-wave-square"></i> SoundBridge</div>
+        <div id="desktop-nav-links"></div> <!-- Filled via CSS/Layout logic -->
+    </nav>
+
+    <!-- AUTH SECTION -->
+    <section id="auth-screen" class="screen">
+        <div class="text-center auth-container">
+            <div class="logo-large"><i class="fas fa-wave-square"></i></div>
+            
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2 class="mb-4">Welcome Back</h2>
+                <div class="input-group">
+                    <input type="email" id="login-email" class="input-field" placeholder="Email Address">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" class="input-field" placeholder="Password">
+                </div>
+                <button onclick="app.login()" class="btn-primary mb-4">Login</button>
+                <p class="text-muted" style="font-size: 0.9rem;">
+                    Don't have an account? <a href="#" onclick="app.toggleAuth('signup')" style="color: var(--secondary)">Sign Up</a>
+                </p>
+                <p class="mt-2"><a href="#" onclick="app.showToast('Reset link sent to email!')" style="color: var(--text-muted); font-size: 0.8rem;">Forgot Password?</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" class="hidden">
+                <h2 class="mb-4">Join SoundBridge</h2>
+                <div class="input-group">
+                    <input type="text" id="signup-name" class="input-field" placeholder="Full Name / Artist Name">
+                </div>
+                <div class="input-group">
+                    <input type="email" id="signup-email" class="input-field" placeholder="Email Address">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="signup-password" class="input-field" placeholder="Create Password">
+                </div>
+                <div class="input-group">
+                    <label>I am a:</label>
+                    <select id="signup-role" class="input-field">
+                        <option value="Artist">Artist</option>
+                        <option value="Label">Independent Label</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                </div>
+                <button onclick="app.signup()" class="btn-primary mb-4">Create Account</button>
+                <p class="text-muted" style="font-size: 0.9rem;">
+                    Already have an account? <a href="#" onclick="app.toggleAuth('login')" style="color: var(--secondary)">Login</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN APP SCREENS CONTAINER -->
+    <main id="app-container" class="hidden">
+
+        <!-- 1. DASHBOARD -->
+        <section id="dashboard-screen" class="screen">
+            <div class="mb-4">
+                <h1 id="welcome-msg">Hi, Artist</h1>
+                <p class="text-muted">Here's what's happening with your music.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-val" id="total-streams">0</div>
+                    <div class="stat-label">Total Streams</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="total-revenue">$0.00</div>
+                    <div class="stat-label">Est. Earnings</div>
+                </div>
+            </div>
+
+            <h3 class="mb-4">Quick Actions</h3>
+            <div class="quick-actions">
+                <button class="action-btn" onclick="app.nav('upload')">
+                    <i class="fas fa-cloud-upload-alt"></i><br>Upload
+                </button>
+                <button class="action-btn" onclick="app.nav('releases')">
+                    <i class="fas fa-compact-disc"></i><br>Releases
+                </button>
+                <button class="action-btn" onclick="app.nav('earnings')">
+                    <i class="fas fa-chart-line"></i><br>Stats
+                </button>
+                <button class="action-btn" onclick="app.nav('ai-studio')" style="border: 1px solid var(--secondary);">
+                    <i class="fas fa-magic" style="background: var(--gemini-gradient); -webkit-background-clip: text; color: transparent;"></i><br>
+                    <span style="font-weight: 700;">AI Studio</span>
+                </button>
+                <button class="action-btn" onclick="app.nav('distribution')">
+                    <i class="fas fa-globe"></i><br>Distrib.
+                </button>
+                <button class="action-btn" onclick="app.nav('profile')">
+                    <i class="fas fa-cog"></i><br>Settings
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="flex" style="justify-content: space-between; align-items: center;">
+                    <h3>Latest Release</h3>
+                    <span style="color: var(--secondary); font-size: 0.8rem;" onclick="app.nav('releases')">View All</span>
+                </div>
+                <div id="dashboard-latest-song" class="mt-2">
+                    <p class="text-muted text-center py-4">No releases yet.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. AI STUDIO (New Feature) -->
+        <section id="ai-studio-screen" class="screen hidden">
+            <h2 class="mb-4" style="background: var(--gemini-gradient); -webkit-background-clip: text; color: transparent; display: inline-block;">AI Creative Studio ✨</h2>
+            <p class="text-muted mb-4">Powered by Google Gemini</p>
+
+            <!-- Lyric Lab -->
+            <div class="card">
+                <div class="flex" style="align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-microphone-alt" style="font-size: 1.5rem; color: var(--secondary); margin-right: 10px;"></i>
+                    <h3>Lyric Lab</h3>
+                </div>
+                <p class="text-muted mb-2">Stuck on a verse? Describe your vibe.</p>
+                <div class="input-group">
+                    <input type="text" id="ai-lyrics-topic" class="input-field" placeholder="Topic (e.g., Summer heartbreak in Tokyo)">
+                </div>
+                <div class="input-group">
+                    <select id="ai-lyrics-genre" class="input-field">
+                        <option value="Pop">Pop</option>
+                        <option value="Rap/Hip-Hop">Rap/Hip-Hop</option>
+                        <option value="Country">Country</option>
+                        <option value="Rock">Rock</option>
+                        <option value="R&B">R&B</option>
+                        <option value="Indie Folk">Indie Folk</option>
+                    </select>
+                </div>
+                <button class="btn-ai" onclick="app.generateLyrics()">Generate Lyrics ✨</button>
+                <div id="ai-lyrics-loading" class="ai-loading">Dreaming up lyrics... <i class="fas fa-spinner fa-spin"></i></div>
+                <div id="ai-lyrics-output" class="ai-result-box"></div>
+            </div>
+
+            <!-- Press Release Writer -->
+            <div class="card">
+                 <div class="flex" style="align-items: center; margin-bottom: 10px;">
+                    <i class="fas fa-newspaper" style="font-size: 1.5rem; color: #4da3ff; margin-right: 10px;"></i>
+                    <h3>Press Agent</h3>
+                </div>
+                <p class="text-muted mb-2">Generate a professional press release.</p>
+                <div class="input-group">
+                    <input type="text" id="ai-pr-title" class="input-field" placeholder="Song Title">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ai-pr-mood" class="input-field" placeholder="Mood/Story (e.g., Upbeat anthem about success)">
+                </div>
+                <button class="btn-outline w-full" onclick="app.generatePR()">Draft Press Release ✨</button>
+                <div id="ai-pr-loading" class="ai-loading">Drafting release... <i class="fas fa-spinner fa-spin"></i></div>
+                <div id="ai-pr-output" class="ai-result-box"></div>
+            </div>
+        </section>
+
+        <!-- 2. UPLOAD MUSIC -->
+        <section id="upload-screen" class="screen hidden">
+            <h2 class="mb-4">Upload New Music</h2>
+            
+            <form id="upload-form" onsubmit="app.handleUpload(event)">
+                <div class="upload-area" onclick="document.getElementById('cover-upload').click()">
+                    <i class="fas fa-image" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 10px;"></i>
+                    <p id="cover-filename">Click to upload Cover Art (Required)</p>
+                    <input type="file" id="cover-upload" accept="image/*" hidden required onchange="app.handleFileSelect(this, 'cover-filename')">
+                </div>
+
+                <div class="input-group">
+                    <label>Track Title</label>
+                    <input type="text" id="song-title" class="input-field" required>
+                </div>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group">
+                        <label>Artist Name</label>
+                        <input type="text" id="song-artist" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Genre</label>
+                        <select id="song-genre" class="input-field">
+                            <option>Pop</option>
+                            <option>Hip Hop</option>
+                            <option>Rock</option>
+                            <option>Electronic</option>
+                            <option>R&B</option>
+                            <option>Indie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Audio File (MP3/WAV)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="file" id="audio-upload" class="input-field" accept="audio/*" required>
+                    </div>
+                </div>
+
+                <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="terms" required style="width: 20px; height: 20px;">
+                    <label for="terms" style="margin:0; font-size: 0.8rem;">I own the rights to this music.</label>
+                </div>
+
+                <button type="submit" class="btn-primary">Submit Release</button>
+            </form>
+        </section>
+
+        <!-- 3. MY RELEASES -->
+        <section id="releases-screen" class="screen hidden">
+            <h2 class="mb-4">My Discography</h2>
+            <div id="releases-list">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <!-- 4. EARNINGS -->
+        <section id="earnings-screen" class="screen hidden">
+            <h2 class="mb-4">Earnings & Stats</h2>
+            
+            <div class="card text-center" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+                <p class="text-muted">Available Balance</p>
+                <h1 style="font-size: 2.5rem; color: var(--success); margin: 10px 0;">$1,240.50</h1>
+                <button class="btn-outline" onclick="app.showToast('Withdrawal request sent!')">Withdraw Funds</button>
+            </div>
+
+            <h3 class="mt-2 mb-4">Stream Performance</h3>
+            <div class="card">
+                <div class="chart-container">
+                    <div class="chart-bar" style="height: 30%;"></div>
+                    <div class="chart-bar" style="height: 50%;"></div>
+                    <div class="chart-bar" style="height: 40%;"></div>
+                    <div class="chart-bar" style="height: 70%;"></div>
+                    <div class="chart-bar" style="height: 60%;"></div>
+                    <div class="chart-bar" style="height: 85%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0 5px;">
+                    <div class="chart-month">Jan</div>
+                    <div class="chart-month">Feb</div>
+                    <div class="chart-month">Mar</div>
+                    <div class="chart-month">Apr</div>
+                    <div class="chart-month">May</div>
+                    <div class="chart-month">Jun</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. DISTRIBUTION -->
+        <section id="distribution-screen" class="screen hidden">
+            <h2 class="mb-4">Store Distribution</h2>
+            <p class="text-muted mb-4">Your music is live on these platforms.</p>
+
+            <div class="card flex" style="align-items: center; margin-bottom: 10px;">
+                <i class="fab fa-spotify" style="font-size: 2rem; color: #1DB954; margin-right: 15px;"></i>
+                <div>
+                    <h4>Spotify</h4>
+                    <span class="status-badge status-live">Live</span>
+                </div>
+            </div>
+            <div class="card flex" style="align-items: center; margin-bottom: 10px;">
+                <i class="fab fa-apple" style="font-size: 2rem; color: #fff; margin-right: 15px;"></i>
+                <div>
+                    <h4>Apple Music</h4>
+                    <span class="status-badge status-live">Live</span>
+                </div>
+            </div>
+            <div class="card flex" style="align-items: center; margin-bottom: 10px;">
+                <i class="fab fa-youtube" style="font-size: 2rem; color: #FF0000; margin-right: 15px;"></i>
+                <div>
+                    <h4>YouTube Music</h4>
+                    <span class="status-badge status-live">Live</span>
+                </div>
+            </div>
+            <div class="card flex" style="align-items: center; margin-bottom: 10px;">
+                <i class="fab fa-amazon" style="font-size: 2rem; color: #00A8E1; margin-right: 15px;"></i>
+                <div>
+                    <h4>Amazon Music</h4>
+                    <span class="status-badge status-pending">Processing</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. PROFILE & SETTINGS -->
+        <section id="profile-screen" class="screen hidden">
+            <h2 class="mb-4">Profile & Settings</h2>
+            
+            <div class="card text-center">
+                <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
+                    <span id="profile-initial">A</span>
+                </div>
+                <h3 id="profile-name">User Name</h3>
+                <p id="profile-role" class="text-muted">Artist</p>
+                <p id="profile-email" class="text-muted" style="font-size: 0.8rem;">email@example.com</p>
+            </div>
+
+            <div class="card">
+                <h4 class="mb-4">App Settings</h4>
+                
+                <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <span>Dark Mode</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="theme-toggle" checked onchange="app.toggleTheme()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <span>Notifications</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <hr style="border-color: #334155; margin: 15px 0;">
+                
+                <button class="btn-primary" style="background: #334155; margin-bottom: 10px;" onclick="app.logout()">Logout</button>
+                <button class="btn-danger w-full" onclick="app.deleteAccount()">Delete Account</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <div class="bottom-nav hidden" id="bottom-nav">
+        <button class="nav-item active" onclick="app.nav('dashboard')" data-label="Home">
+            <i class="fas fa-home"></i>
+        </button>
+        <button class="nav-item" onclick="app.nav('releases')" data-label="Music">
+            <i class="fas fa-music"></i>
+        </button>
+        <button class="nav-item" onclick="app.nav('upload')" style="color: var(--secondary); transform: translateY(-5px);" data-label="Upload">
+            <i class="fas fa-plus-circle" style="font-size: 2.2rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"></i>
+        </button>
+        <button class="nav-item" onclick="app.nav('earnings')" data-label="Stats">
+            <i class="fas fa-chart-pie"></i>
+        </button>
+        <button class="nav-item" onclick="app.nav('profile')" data-label="Profile">
+            <i class="fas fa-user"></i>
+        </button>
+    </div>
+
+    <script>
+        const app = {
+            state: {
+                currentUser: null,
+                users: JSON.parse(localStorage.getItem('sb_users')) || [],
+                songs: JSON.parse(localStorage.getItem('sb_songs')) || [],
+                theme: localStorage.getItem('sb_theme') || 'dark'
+            },
+
+            init: function() {
+                // Check Session
+                const sessionUser = localStorage.getItem('sb_session');
+                if (sessionUser) {
+                    this.state.currentUser = JSON.parse(sessionUser);
+                    this.showApp();
+                } else {
+                    this.showAuth();
+                }
+
+                // Apply Theme
+                if (this.state.theme === 'light') {
+                    document.body.setAttribute('data-theme', 'light');
+                    document.getElementById('theme-toggle').checked = false;
+                }
+            },
+
+            // --- Authentication Logic ---
+            toggleAuth: function(view) {
+                if (view === 'signup') {
+                    document.getElementById('login-form').classList.add('hidden');
+                    document.getElementById('signup-form').classList.remove('hidden');
+                } else {
+                    document.getElementById('signup-form').classList.add('hidden');
+                    document.getElementById('login-form').classList.remove('hidden');
+                }
+            },
+
+            signup: function() {
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const role = document.getElementById('signup-role').value;
+
+                if (!name || !email || !password) return this.showToast("Please fill all fields");
+
+                if (this.state.users.find(u => u.email === email)) {
+                    return this.showToast("Email already registered!");
+                }
+
+                const newUser = { id: Date.now(), name, email, password, role };
+                this.state.users.push(newUser);
+                this.saveData();
+                this.loginUser(newUser);
+            },
+
+            login: function() {
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                const user = this.state.users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    this.loginUser(user);
+                } else {
+                    this.showToast("Invalid Credentials");
+                }
+            },
+
+            loginUser: function(user) {
+                this.state.currentUser = user;
+                localStorage.setItem('sb_session', JSON.stringify(user));
+                this.showApp();
+                this.showToast(`Welcome back, ${user.name}`);
+            },
+
+            logout: function() {
+                this.state.currentUser = null;
+                localStorage.removeItem('sb_session');
+                window.location.reload();
+            },
+
+            deleteAccount: function() {
+                if(confirm("Are you sure? This cannot be undone.")) {
+                    this.state.users = this.state.users.filter(u => u.email !== this.state.currentUser.email);
+                    this.saveData();
+                    this.logout();
+                }
+            },
+
+            // --- Navigation & UI ---
+            showAuth: function() {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('main-nav').classList.add('hidden');
+                document.getElementById('bottom-nav').classList.add('hidden');
+            },
+
+            showApp: function() {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('main-nav').classList.remove('hidden');
+                document.getElementById('bottom-nav').classList.remove('hidden');
+                
+                this.updateDashboard();
+                this.nav('dashboard');
+            },
+
+            nav: function(screenId) {
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(el => {
+                    if(el.id !== 'auth-screen') el.classList.add('hidden');
+                });
+                
+                // Show target screen
+                const target = document.getElementById(`${screenId}-screen`);
+                if(target) target.classList.remove('hidden');
+
+                // Update Bottom Nav Active State
+                document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+                const navBtn = document.querySelector(`button[onclick="app.nav('${screenId}')"]`);
+                if(navBtn) navBtn.classList.add('active');
+
+                // Specific Logic per screen
+                if(screenId === 'releases') this.renderReleases();
+                if(screenId === 'dashboard') this.updateDashboard();
+                
+                window.scrollTo(0, 0);
+            },
+
+            // --- Dashboard & Data ---
+            updateDashboard: function() {
+                const user = this.state.currentUser;
+                const userSongs = this.state.songs.filter(s => s.userId === user.id);
+                
+                // Update Profile Elements
+                document.getElementById('welcome-msg').innerText = `Hi, ${user.name}`;
+                document.getElementById('profile-name').innerText = user.name;
+                document.getElementById('profile-role').innerText = user.role;
+                document.getElementById('profile-email').innerText = user.email;
+                document.getElementById('profile-initial').innerText = user.name.charAt(0).toUpperCase();
+
+                // Fake Stats Logic
+                const totalStreams = userSongs.length * 1543; // Random multiplier
+                const revenue = (totalStreams * 0.004).toFixed(2); // Spotify avg pay per stream
+
+                document.getElementById('total-streams').innerText = totalStreams.toLocaleString();
+                document.getElementById('total-revenue').innerText = `$${revenue}`;
+
+                // Latest Song
+                const latestDiv = document.getElementById('dashboard-latest-song');
+                if(userSongs.length > 0) {
+                    const last = userSongs[userSongs.length - 1];
+                    latestDiv.innerHTML = `
+                        <div class="song-card">
+                            <img src="${last.cover}" class="song-img">
+                            <div class="song-info">
+                                <h4>${last.title}</h4>
+                                <span class="status-badge status-live">Live</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+
+            // --- File & Upload Handling ---
+            handleFileSelect: function(input, labelId) {
+                if (input.files && input.files[0]) {
+                    document.getElementById(labelId).innerText = input.files[0].name;
+                }
+            },
+
+            handleUpload: function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('cover-upload');
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        app.saveSong(e.target.result);
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+            },
+
+            saveSong: function(base64Image) {
+                const newSong = {
+                    id: Date.now(),
+                    userId: this.state.currentUser.id,
+                    title: document.getElementById('song-title').value,
+                    artist: document.getElementById('song-artist').value,
+                    genre: document.getElementById('song-genre').value,
+                    cover: base64Image,
+                    status: 'Pending Review',
+                    date: new Date().toLocaleDateString()
+                };
+
+                this.state.songs.push(newSong);
+                this.saveData();
+                
+                this.showToast("Song Uploaded Successfully!");
+                document.getElementById('upload-form').reset();
+                document.getElementById('cover-filename').innerText = "Click to upload Cover Art";
+                this.nav('releases');
+            },
+
+            renderReleases: function() {
+                const list = document.getElementById('releases-list');
+                const userSongs = this.state.songs.filter(s => s.userId === this.state.currentUser.id);
+                
+                if (userSongs.length === 0) {
+                    list.innerHTML = '<p class="text-center text-muted mt-2">No music uploaded yet.</p>';
+                    return;
+                }
+
+                list.innerHTML = userSongs.map(song => `
+                    <div class="song-card">
+                        <img src="${song.cover}" class="song-img" alt="Art">
+                        <div class="song-info">
+                            <h4>${song.title}</h4>
+                            <p>${song.artist} • ${song.genre}</p>
+                            <span class="status-badge ${song.status === 'Live' ? 'status-live' : 'status-pending'}">${song.status}</span>
+                        </div>
+                        <div class="song-actions">
+                            <button onclick="app.deleteSong(${song.id})" class="btn-danger"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).reverse().join('');
+            },
+
+            deleteSong: function(id) {
+                if(confirm("Delete this release?")) {
+                    this.state.songs = this.state.songs.filter(s => s.id !== id);
+                    this.saveData();
+                    this.renderReleases();
+                    this.showToast("Release deleted.");
+                }
+            },
+
+            // --- Utilities ---
+            toggleTheme: function() {
+                const body = document.body;
+                if (body.getAttribute('data-theme') === 'light') {
+                    body.removeAttribute('data-theme');
+                    this.state.theme = 'dark';
+                } else {
+                    body.setAttribute('data-theme', 'light');
+                    this.state.theme = 'light';
+                }
+                localStorage.setItem('sb_theme', this.state.theme);
+            },
+
+            saveData: function() {
+                localStorage.setItem('sb_users', JSON.stringify(this.state.users));
+                localStorage.setItem('sb_songs', JSON.stringify(this.state.songs));
+            },
+
+            showToast: function(msg) {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                toast.innerText = msg;
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            },
+
+            // --- GEMINI AI INTEGRATION ---
+            
+            callGemini: async function(prompt) {
+                const apiKey = ""; // Set your API key here
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                
+                const makeRequest = async (retryCount = 0) => {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: prompt }] }]
+                            })
+                        });
+
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        
+                        const data = await response.json();
+                        return data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    } catch (error) {
+                        if (retryCount < 5) {
+                            const delay = Math.pow(2, retryCount) * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return makeRequest(retryCount + 1);
+                        }
+                        throw error;
+                    }
+                };
+
+                try {
+                    return await makeRequest();
+                } catch (e) {
+                    console.error("Gemini API failed:", e);
+                    app.showToast("AI Service Unavailable. Please try again.");
+                    return null;
+                }
+            },
+
+            generateLyrics: async function() {
+                const topic = document.getElementById('ai-lyrics-topic').value;
+                const genre = document.getElementById('ai-lyrics-genre').value;
+                const output = document.getElementById('ai-lyrics-output');
+                const loading = document.getElementById('ai-lyrics-loading');
+
+                if (!topic) return this.showToast("Please enter a topic.");
+
+                output.style.display = 'none';
+                loading.style.display = 'block';
+
+                const prompt = `Write a short verse and chorus for a ${genre} song about: ${topic}. Format it nicely with [Verse] and [Chorus] labels.`;
+                const text = await this.callGemini(prompt);
+
+                loading.style.display = 'none';
+                if (text) {
+                    output.innerText = text;
+                    output.style.display = 'block';
+                }
+            },
+
+            generatePR: async function() {
+                const title = document.getElementById('ai-pr-title').value;
+                const mood = document.getElementById('ai-pr-mood').value;
+                const output = document.getElementById('ai-pr-output');
+                const loading = document.getElementById('ai-pr-loading');
+
+                if (!title || !mood) return this.showToast("Please fill in fields.");
+
+                output.style.display = 'none';
+                loading.style.display = 'block';
+
+                const prompt = `Write a short, hype-filled music press release for a new song called "${title}". The vibe is: ${mood}. Include placeholders for Date and Artist Name.`;
+                const text = await this.callGemini(prompt);
+
+                loading.style.display = 'none';
+                if (text) {
+                    output.innerText = text;
+                    output.style.display = 'block';
+                }
+            }
+        };
+
+        // Initialize App on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+  </html>
